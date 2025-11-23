@@ -1,5 +1,7 @@
 package br.com.alura.AluraFake.user;
 
+import br.com.alura.AluraFake.user.dto.NewUserDTO;
+import br.com.alura.AluraFake.user.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +39,10 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newUserDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("email"))
-                .andExpect(jsonPath("$[0].message").isNotEmpty());
+//                .andExpect(jsonPath("$[0].field").value("email"))
+//                .andExpect(jsonPath("$[0].message").isNotEmpty());
+                .andExpect(jsonPath("$.message").value("Validation failed for argument(s)"))
+                .andExpect(jsonPath("$.details").value("email: must not be blank"));
     }
 
     @Test
@@ -52,8 +56,10 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newUserDTO)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("email"))
-                .andExpect(jsonPath("$[0].message").isNotEmpty());
+//                .andExpect(jsonPath("$[0].field").value("email"))
+//                .andExpect(jsonPath("$[0].message").isNotEmpty());
+                .andExpect(jsonPath("$.message").value("Validation failed for argument(s)"))
+                .andExpect(jsonPath("$.details").value("email: must be a well-formed email address"));
     }
 
     @Test
@@ -90,8 +96,8 @@ class UserControllerTest {
 
     @Test
     void listAllUsers__should_list_all_users() throws Exception {
-        User user1 = new User("User 1", "user1@test.com",Role.STUDENT);
-        User user2 = new User("User 2", "user2@test.com",Role.STUDENT);
+        User user1 = new User("User 1", "user1@test.com",Role.STUDENT, "123456");
+        User user2 = new User("User 2", "user2@test.com",Role.STUDENT, "123456");
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
         mockMvc.perform(get("/user/all")
